@@ -14,3 +14,29 @@ func main() {
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("hello world"))
 }
+func checkRow(board [][]string) bool {
+	// check foward row
+	counter := 0
+	suit := board[0][0]
+	for row := 0; row < 3; row++ {
+		for col := 0; col < 3; col++ {
+			// count every col if item in col is suit
+			if board[row][col] == suit {
+				// counter
+				counter++
+				// if at the end of the col i check for 3 then reset counter and move on
+				if col == 2 {
+					if counter == 3 {
+						fmt.Println(row)
+						return true
+					}
+					counter = 0
+				}
+				continue
+			} else {
+				counter = 0
+			}
+		}
+	}
+	return false
+}

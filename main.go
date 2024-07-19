@@ -8,8 +8,8 @@ func main() {
 
 	board := [][]string{
 		{"x", "o", "x"},
-		{"o", "x", "o"},
-		{"x", "o", "x"},
+		{"o", "x", "x"},
+		{"x", "x", "x"},
 	}
 	// create game state
 	playing := true
@@ -30,19 +30,11 @@ func main() {
 	}
 }
 
-func checkRow(board [][]string) bool {
-	// check row
-	counter := 0
-	suit := board[0][0]
-	for _, row := range board[0] {
-		if row == suit {
-			counter++
+func checkRow(board [][]string) (bool, int) {
+	for row := 0; row < 3; row++ {
+		if board[row][0] == board[row][1] && board[row][1] == board[row][2] {
+			return true, row
 		}
 	}
-	// if three of the same kind
-	if counter == 3 {
-		return true
-	}
-	// set type as winner and return bool
-	return false
+	return false, -1
 }
