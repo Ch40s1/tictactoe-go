@@ -9,7 +9,7 @@ func main() {
 	board := [][]string{
 		{"x", "o", "x"},
 		{"o", "x", "x"},
-		{"x", "x", "x"},
+		{"x", "o", "o"},
 	}
 	// create game state
 	playing := true
@@ -18,6 +18,8 @@ func main() {
 	for playing {
 		var i int
 		fmt.Println(checkRow(board))
+		fmt.Println(checkCol(board))
+		fmt.Println(checkDia(board))
 		fmt.Println("game in progress")
 		fmt.Println("press 1 to exit")
 		fmt.Scan(&i)
@@ -35,6 +37,27 @@ func checkRow(board [][]string) (bool, int) {
 		if board[row][0] == board[row][1] && board[row][1] == board[row][2] {
 			return true, row
 		}
+	}
+	return false, -1
+}
+
+func checkCol(board [][]string) (bool, int) {
+	for col := 0; col < 3; col++ {
+		if board[0][col] == board[1][col] && board[1][col] == board[2][col] {
+			return true, col
+		}
+	}
+	return false, -1
+}
+
+func checkDia(board [][]string) (bool, int) {
+	//diagonal one
+	if board[0][0] == board[1][1] && board[1][1] == board[2][2] {
+		return true, 1
+	}
+	//diagonal two
+	if board[0][2] == board[1][1] && board[1][1] == board[2][0] {
+		return true, 2
 	}
 	return false, -1
 }
