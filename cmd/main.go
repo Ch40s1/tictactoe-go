@@ -24,7 +24,7 @@ func main() {
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir("./cmd/client"))
 	mux.Handle("/", fs)
-	mux.HandleFunc("/game", game.ShowBoard)
+	mux.HandleFunc("/board", game.ShowBoard)
 	fmt.Println("listening on http://localhost:3000/")
 	log.Fatal(http.ListenAndServe(":3000", mux))
 }
