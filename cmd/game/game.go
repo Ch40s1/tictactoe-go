@@ -2,15 +2,54 @@ package game
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
-func ShowBoard(w http.ResponseWriter, r *http.Request) {
-	board := [][]string{
-		{"x", "o", "x"},
-		{"o", "x", "x"},
-		{"x", "o", "o"},
+// create 2d slice with empty values
+var board = [][]string{
+	{"", "", ""},
+	{"", "", ""},
+	{"", "", ""},
+}
+
+func updateBoard(data map[string]string) {
+	inputCords := data["cord"]
+	indices := strings.Split(inputCords, ",")
+	row, err1 := strconv.Atoi(indices[0])
+	col, err2 := strconv.Atoi(indices[1])
+	if err1 != nil || err2 != nil {
+		fmt.Println("Error converting indices to integers")
+		return
 	}
+	// Update the board at the given indices
+	board[row][col] = data["symbol"]
+}
+
+func GetUserMove(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var data map[string]string
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Printf("Received: %+v\n", data)
+	updateBoard(data)
+
+	response := map[string]string{"status": "success"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func ShowBoard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	response := map[string]string{
 		"0,0": board[0][0],
@@ -28,34 +67,6 @@ func ShowBoard(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
-// func game() {
-
-// 	board := [][]string{
-// 		{"x", "o", "x"},
-// 		{"o", "x", "x"},
-// 		{"x", "o", "o"},
-// 	}
-// 	// create game state
-// 	playing := true
-// 	// create stuct with player info for now use hardcode
-
-// 	for playing {
-// 		var i int
-// 		fmt.Println(checkRow(board))
-// 		fmt.Println(checkCol(board))
-// 		fmt.Println(checkDia(board))
-// 		fmt.Println("game in progress")
-// 		fmt.Println("press 1 to exit")
-// 		fmt.Scan(&i)
-// 		defer fmt.Println("exiting game")
-// 		if i == 1 {
-// 			return
-// 		} else {
-// 			fmt.Println("press 1 to exit or wait")
-// 		}
-// 	}
-// }
 
 // func checkRow(board [][]string) (bool, int) {
 // 	for row := 0; row < 3; row++ {
