@@ -64,7 +64,7 @@ async function playerTurn(player, nextTurn, endGame) {
           return;
         }
 
-        alert(`${player.name}'s turn ends`);
+        // alert(`${player.name}'s turn ends`);
         nextTurn();
       })
       .catch((error) => {
