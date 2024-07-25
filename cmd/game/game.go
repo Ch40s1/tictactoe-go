@@ -8,11 +8,17 @@ import (
 	"strings"
 )
 
-// create 2d slice with empty values
 var board = [][]string{
 	{"", "", ""},
 	{"", "", ""},
 	{"", "", ""},
+}
+
+func checkBoard(board [][]string) string {
+	if checkRow(board) || checkCol(board) || checkDia(board) {
+		return "winner"
+	}
+	return "no winner"
 }
 
 func updateBoard(data map[string]string) {
@@ -24,7 +30,6 @@ func updateBoard(data map[string]string) {
 		fmt.Println("Error converting indices to integers")
 		return
 	}
-	// Update the board at the given indices
 	board[row][col] = data["symbol"]
 }
 
@@ -43,8 +48,8 @@ func GetUserMove(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Received: %+v\n", data)
 	updateBoard(data)
-
-	response := map[string]string{"status": "success"}
+	winner := checkBoard(board)
+	response := map[string]string{"status": "success", "winner": winner}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -68,32 +73,30 @@ func ShowBoard(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func checkRow(board [][]string) (bool, int) {
-// 	for row := 0; row < 3; row++ {
-// 		if board[row][0] == board[row][1] && board[row][1] == board[row][2] {
-// 			return true, row
-// 		}
-// 	}
-// 	return false, -1
-// }
+func checkRow(board [][]string) bool {
+	for row := 0; row < 3; row++ {
+		if board[row][0] != "" && board[row][0] == board[row][1] && board[row][1] == board[row][2] {
+			return true
+		}
+	}
+	return false
+}
 
-// func checkCol(board [][]string) (bool, int) {
-// 	for col := 0; col < 3; col++ {
-// 		if board[0][col] == board[1][col] && board[1][col] == board[2][col] {
-// 			return true, col
-// 		}
-// 	}
-// 	return false, -1
-// }
+func checkCol(board [][]string) bool {
+	for col := 0; col < 3; col++ {
+		if board[0][col] != "" && board[0][col] == board[1][col] && board[1][col] == board[2][col] {
+			return true
+		}
+	}
+	return false
+}
 
-// func checkDia(board [][]string) (bool, int) {
-// 	//diagonal one
-// 	if board[0][0] == board[1][1] && board[1][1] == board[2][2] {
-// 		return true, 1
-// 	}
-// 	//diagonal two
-// 	if board[0][2] == board[1][1] && board[1][1] == board[2][0] {
-// 		return true, 2
-// 	}
-// 	return false, -1
-// }
+func checkDia(board [][]string) bool {
+	if board[0][0] != "" && board[0][0] == board[1][1] && board[1][1] == board[2][2] {
+		return true
+	}
+	if board[0][2] != "" && board[0][2] == board[1][1] && board[1][1] == board[2][0] {
+		return true
+	}
+	return false
+}
